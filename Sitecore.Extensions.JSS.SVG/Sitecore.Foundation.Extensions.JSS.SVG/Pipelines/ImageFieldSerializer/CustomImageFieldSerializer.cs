@@ -1,18 +1,28 @@
-﻿using Newtonsoft.Json;
-using Sitecore.Data.Fields;
-using Sitecore.LayoutService.Serialization;
+﻿using Sitecore.LayoutService.Serialization;
 using System;
 using System.Collections.Generic;
 
 namespace Sitecore.Foundation.Extensions.JSS.SVG.Pipelines.ImageFieldSerializer
 {
+    /// <summary>
+    /// Implements the the Custom Image Field Serializer for serializing the SVG images.
+    /// Inherits the <see cref="P:Sitecore.LayoutService.Serialization.FieldSerializers.ImageFieldSerializer"/>
+    /// </summary>
     class CustomImageFieldSerializer : LayoutService.Serialization.FieldSerializers.ImageFieldSerializer
     {
-        string _renderedValue;
+
         public CustomImageFieldSerializer(IFieldRenderer fieldRenderer) : base(fieldRenderer)
         {
         }
 
+        /// <summary>
+        /// Overrides ParseRenderedImage method of the <see cref="P:Sitecore.LayoutService.Serialization.FieldSerializers.ImageFieldSerializer"/>
+        /// Parses the rendered field to Dictionary.
+        /// If the rendered field has the SVG code, it will put this code into the dictionary with "svgCode" key.
+        /// Otherwise this method will call the base method
+        /// </summary>
+        /// <param name="renderedField">The rendered field</param>
+        /// <returns>The rendered field as Dictionary</returns>
         protected override IDictionary<string, string> ParseRenderedImage(string renderedField)
         {
             var dictionary = new Dictionary<string, string>();
@@ -32,18 +42,6 @@ namespace Sitecore.Foundation.Extensions.JSS.SVG.Pipelines.ImageFieldSerializer
             }
 
             return base.ParseRenderedImage(renderedField);
-        }
-
-        protected override void WriteValue(Field field, JsonTextWriter writer)
-        {
-            WriteImageObject(ParseRenderedImage(GetRenderedValue(field, null)), field, writer);
-        }
-
-        protected override string GetRenderedValue(Field field, SerializationOptions options = null)
-        {
-            if (string.IsNullOrWhiteSpace(_renderedValue))
-                _renderedValue = RenderField(field, options != null && options.DisableEditing).ToString();
-            return _renderedValue;
         }
     }
 }

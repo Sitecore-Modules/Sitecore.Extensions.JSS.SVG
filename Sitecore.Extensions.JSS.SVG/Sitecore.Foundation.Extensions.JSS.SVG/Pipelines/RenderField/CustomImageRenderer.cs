@@ -1,5 +1,4 @@
-﻿using Sitecore;
-using Sitecore.Collections;
+﻿using Sitecore.Collections;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
@@ -10,6 +9,10 @@ using System.Xml.Linq;
 
 namespace Sitecore.Foundation.Extensions.JSS.SVG.Pipelines.RenderField
 {
+    /// <summary>
+    /// Implements the the Custom Image Renderer for rendering the SVG images.
+    /// Inherits the <see cref="P:Sitecore.Xml.Xsl.ImageRenderer"/>
+    /// </summary>
     public class CustomImageRenderer : ImageRenderer
     {
         /// <summary>Image field.</summary>
@@ -23,6 +26,13 @@ namespace Sitecore.Foundation.Extensions.JSS.SVG.Pipelines.RenderField
         /// <summary>The height set.</summary>
         private bool _heightSet;
 
+        /// <summary>
+        /// Overrides Render method of the <see cref="P:Sitecore.Xml.Xsl.ImageRenderer"/>.
+        /// Checks the MIME type of the image field.
+        /// If the MIME type corresponds to the SVG, it will render the field in the SVG code.
+        /// Otherwise, it calls the base render method.
+        /// </summary>
+        /// <returns>The render.</returns>
         public override RenderFieldResult Render()
         {
             var obj = Item;
@@ -31,7 +41,6 @@ namespace Sitecore.Foundation.Extensions.JSS.SVG.Pipelines.RenderField
             var parameters = Parameters;
             if (parameters == null)
                 return RenderFieldResult.Empty;
-            ParseNodeEx(parameters);
             var field = obj.Fields[FieldName];
             if (field != null)
             {
@@ -43,6 +52,7 @@ namespace Sitecore.Foundation.Extensions.JSS.SVG.Pipelines.RenderField
 
                     if (imageMediaItem.MimeType == "image/svg+xml")
                     {
+                        ParseNodeForSvg(parameters);
                         return new RenderFieldResult(RenderSvgImage(imageMediaItem));
                     }
                 }
@@ -51,14 +61,23 @@ namespace Sitecore.Foundation.Extensions.JSS.SVG.Pipelines.RenderField
             return base.Render();
         }
 
-        protected virtual void ParseNodeEx(SafeDictionary<string> attributes)
+        /// <summary>
+        /// Extracts the specified attributes for SVG.
+        /// </summary>
+        /// <param name="attributes">The attributes.</param>
+        protected virtual void ParseNodeForSvg(SafeDictionary<string> attributes)
         {
             Assert.ArgumentNotNull(attributes, nameof(attributes));
             _width = MainUtil.GetInt(Extract(attributes, ref _widthSet, "width", "w"), 0);
             _height = MainUtil.GetInt(Extract(attributes, ref _heightSet, "height", "h"), 0);
         }
 
-        private string RenderSvgImage(MediaItem mediaItem)
+        /// <summary>
+        /// Extracts the svg code from the Media Item.
+        /// </summary>
+        /// <param name="mediaItem">The Media Item that represents SVG</param>
+        /// <returns>The SVG code as string</returns>
+        protected virtual string RenderSvgImage(MediaItem mediaItem)
         {
             Assert.ArgumentNotNull(mediaItem, "mediaItem");
             string result;
