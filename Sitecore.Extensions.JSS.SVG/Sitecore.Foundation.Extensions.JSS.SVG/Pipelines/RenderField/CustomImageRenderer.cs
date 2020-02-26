@@ -1,4 +1,5 @@
-﻿using Sitecore.Collections;
+﻿using System;
+using Sitecore.Collections;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
@@ -11,7 +12,7 @@ namespace Sitecore.Foundation.Extensions.JSS.SVG.Pipelines.RenderField
 {
     /// <summary>
     /// Implements the the Custom Image Renderer for rendering the SVG images.
-    /// Inherits the <see cref="P:Sitecore.Xml.Xsl.ImageRenderer"/>
+    /// Inherits the <see cref="P:Sitecore.Xml.Xsl.ImageRenderer"/>.
     /// </summary>
     public class CustomImageRenderer : ImageRenderer
     {
@@ -35,13 +36,12 @@ namespace Sitecore.Foundation.Extensions.JSS.SVG.Pipelines.RenderField
         /// <returns>The render.</returns>
         public override RenderFieldResult Render()
         {
-            var obj = Item;
-            if (obj == null)
+            if (Item == null || Parameters == null)
+            {
                 return RenderFieldResult.Empty;
-            var parameters = Parameters;
-            if (parameters == null)
-                return RenderFieldResult.Empty;
-            var field = obj.Fields[FieldName];
+            }
+
+            var field = Item.Fields[FieldName];
             if (field != null)
             {
                 _imageField = new ImageField(field, FieldValue);
@@ -50,9 +50,9 @@ namespace Sitecore.Foundation.Extensions.JSS.SVG.Pipelines.RenderField
                 {
                     var imageMediaItem = new MediaItem(_imageField.MediaItem);
 
-                    if (imageMediaItem.MimeType == "image/svg+xml")
+                    if (imageMediaItem.MimeType.Equals("image/svg+xml", StringComparison.Ordinal))
                     {
-                        ParseNodeForSvg(parameters);
+                        ParseNodeForSvg(Parameters);
                         return new RenderFieldResult(RenderSvgImage(imageMediaItem));
                     }
                 }
@@ -75,8 +75,8 @@ namespace Sitecore.Foundation.Extensions.JSS.SVG.Pipelines.RenderField
         /// <summary>
         /// Extracts the svg code from the Media Item.
         /// </summary>
-        /// <param name="mediaItem">The Media Item that represents SVG</param>
-        /// <returns>The SVG code as string</returns>
+        /// <param name="mediaItem">The Media Item that represents SVG.</param>
+        /// <returns>The SVG code as string.</returns>
         protected virtual string RenderSvgImage(MediaItem mediaItem)
         {
             Assert.ArgumentNotNull(mediaItem, "mediaItem");
