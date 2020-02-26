@@ -1,0 +1,1 @@
+# Sitecore.Extensions.JSS.SVG
