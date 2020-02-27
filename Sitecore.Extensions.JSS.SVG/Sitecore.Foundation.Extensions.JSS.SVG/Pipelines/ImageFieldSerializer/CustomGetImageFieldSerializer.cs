@@ -6,7 +6,7 @@ namespace Sitecore.Foundation.Extensions.JSS.SVG.Pipelines.ImageFieldSerializer
 {
     /// <summary>
     /// Serialize the image field from <see cref="P:Sitecore.LayoutService.Serialization.Pipelines.GetFieldSerializer.GetFieldSerializerPipelineArgs.Field" /> into <see cref="P:Sitecore.LayoutService.Serialization.Pipelines.GetFieldSerializer.GetFieldSerializerPipelineArgs.Result" />.
-    /// Inherits the <see cref="P:Sitecore.LayoutService.Serialization.Pipelines.GetFieldSerializer.CustomGetImageFieldSerializer"/> and returns the <see cref="T:Sitecore.Foundation.Extensions.JSS.SVG.Pipelines.ImageFieldSerializer.CustomImageFieldSerializer" />.
+    /// Inherits the <see cref="P:Sitecore.LayoutService.Serialization.Pipelines.GetFieldSerializer.GetImageFieldSerializer"/> and returns the <see cref="T:Sitecore.Foundation.Extensions.JSS.SVG.Pipelines.ImageFieldSerializer.CustomImageFieldSerializer" />.
     /// </summary>
     public class CustomGetImageFieldSerializer : GetImageFieldSerializer
     {
